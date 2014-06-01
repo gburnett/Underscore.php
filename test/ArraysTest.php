@@ -43,7 +43,7 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array(2,3,4), $result, 'aliased as tail and works on arguments');
     
     $result = __::map(array(array(1,2,3), array(1,2,3)), function($vals) { return __::rest($vals); });
-    $this->assertEquals('2,3,2,3', join(',', __::flatten($result)), 'works well with __::map');
+    $this->assertEquals(array(array(2,3),array(2,3)), $result, 'works well with __::map');
     
     // extra
     $this->assertEquals(array('b','c'), __::tail(array('a','b','c')));
@@ -54,17 +54,17 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
   
   public function testInitial() {
     // from js
-    $this->assertEquals('1, 2, 3, 4', join(', ', __::initial(array(1,2,3,4,5))), 'working initial()');
-    $this->assertEquals('1, 2', join(', ', __::initial(array(1,2,3,4), 2)), 'initial can take an index');
+    $this->assertEquals(array(1, 2, 3, 4), __::initial(array(1,2,3,4,5)), 'working initial()');
+    $this->assertEquals(array(1, 2), __::initial(array(1,2,3,4), 2), 'initial can take an index');
     
     $func = function() {
       return __(func_get_args())->initial();
     };
     $result = $func(1,2,3,4);
-    $this->assertEquals('1, 2, 3', join(', ', $result), 'initial works on arguments');
+    $this->assertEquals(array(1, 2, 3), $result, 'initial works on arguments');
     
     $result = __::map(array(array(1,2,3), array(1,2,3)), function($item) { return __::initial($item); });
-    $this->assertEquals('1,2,1,2', join(',', __::flatten($result)), 'initial works with map');
+    $this->assertEquals(array(array(1,2),array(1,2)), $result, 'initial works with map');
     
     // extra
     $this->assertEquals(array('a','b'), __(array('a','b','c'))->initial(), 'works with OO-style calls');
@@ -85,12 +85,12 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
     $result = $func(1,2,3,4);
     $this->assertEquals(4, $result, 'works on arguments');
     
-    $this->assertEquals('', join(', ', __::last(array(1,2,3), 0)), 'can pass n to last');
-    $this->assertEquals('2, 3', join(', ', __::last(array(1,2,3), 2)), 'can pass n to last');
-    $this->assertEquals('1, 2, 3', join(', ', __::last(array(1,2,3), 5)), 'can pass n to last');
+    $this->assertEquals(array(), __::last(array(1,2,3), 0), 'can pass n to last');
+    $this->assertEquals(array(2, 3), __::last(array(1,2,3), 2), 'can pass n to last');
+    $this->assertEquals(array(1, 2, 3), __::last(array(1,2,3), 5), 'can pass n to last');
     
     $result = __::map(array(array(1,2,3), array(1,2,3)), function($item) { return __::last($item); });
-    $this->assertEquals('3,3', join(',', $result), 'works well with map');
+    $this->assertEquals(array(3,3), $result, 'works well with map');
     
     // docs
     $this->assertEquals(1, __::last(array(5, 4, 3, 2, 1)));
@@ -146,9 +146,6 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
     $result = $func(1, 2, 1, 0, 3, 1, 4);
     $this->assertEquals(array(1=>2,4=>3,6=>4), $result, 'works on an arguments object');
     
-    $result = __::union(array(1, 2, 3), array(2, 30, 1), array(1, 40, array(1)));
-    $this->assertEquals('1 2 3 30 40 1', join(' ', $result), 'takes the union of a list of nested arrays');
-      
     // extra
     $this->assertEquals(array(4,5,6), __(array(4,5,6,7,8))->without(7,8), 'works in OO-style calls');
     
@@ -216,6 +213,12 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
     // extra
     $result = __(array(1, 2, 3))->union(array(2, 30, 1), array(1, 40));
     $this->assertEquals(array(1, 2, 3, 30, 40), $result, 'works with OO-style call');
+
+    $result = __::union(array(1, 2, 3), array(2, 30, 1), array(1, 40, array(1)));
+    $this->assertEquals(array(1, 2, 3, 30, 40, array(1)), $result, 'takes the union of a list of nested arrays');
+  
+    $result = __::union(array(1, array(2), 3), array(2, 30, array(4), 1), array(1, 40, array(1)));
+    $this->assertEquals(array(1, array(2), 3, 2, 30, array(4), 40, array(1)), $result, 'takes the union of a list of nested arrays');
   
     // docs
     $arr1 = array(1, 2, 3);
@@ -230,7 +233,7 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(array(1, 3), $result, 'takes the difference of two arrays');
     
     $result = __::difference(array(1, 2, 3, 4), array(2, 30, 40), array(1, 11, 111));
-    $this->assertEquals('3 4', join(' ', $result), 'takes the difference of three arrays');
+    $this->assertEquals(array(3, 4), $result, 'takes the difference of three arrays');
     
     // extra
     $result = __(array(1, 2, 3))->difference(array(2, 30, 40));
