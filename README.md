@@ -8,6 +8,6 @@ For docs, license, tests, change log, and downloads, see:
 http://brianhaveri.github.com/Underscore.php
 
 Changes in this fork
-====================
+--------------------
 
 This fork uses features of PHP that require PHP 5 >= PHP 5.4.0
