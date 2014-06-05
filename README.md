@@ -11,3 +11,5 @@ Changes in this fork
 --------------------
 
 This fork uses features of PHP that require PHP 5 >= PHP 5.4.0
+
+[![Build Status](https://travis-ci.org/gburnett/Underscore.php.svg?branch=master)](https://travis-ci.org/gburnett/Underscore.php)
