@@ -3,3 +3,4 @@ php:
   - "5.4"
 before_install:
   - php /home/travis/.phpenv/versions/5.4/bin/composer self-update
+script: cd test && phpunit .
