@@ -52,6 +52,13 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
       $str .= $index . '=' . ($num * $multiplier) . ',';
     });
     $this->assertEquals('0=2,1=4,2=6,', $str);
+
+    $answers = array();
+    $context = (object) array('multiplier'=>5);
+    __::each(array(1,2,3), function($num) use (&$answers) {
+      $answers[] = $num * $this->multiplier;
+    }, $context);
+    $this->assertEquals(array(5,10,15), $answers, 'context object bound');
   }
   
   public function testMap() {
@@ -66,7 +73,7 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $multiplier = 3;
     $func = function($num) use ($multiplier) { return $num * $multiplier; };
     $tripled = __::map(array(1,2,3), $func);
-    $this->assertEquals(array(3,6,9), $tripled);
+    $this->assertEquals(array(3,6,9), $tripled, 'tripled numbers with context');
     
     $doubled = __(array(1,2,3))->map(function($num) { return $num * 2; });
     $this->assertEquals(array(2,4,6), $doubled, 'OO-style doubled numbers');
@@ -80,6 +87,12 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     // docs
     $this->assertEquals(array(3,6,9), __::map(array(1, 2, 3), function($num) { return $num * 3; }));
     $this->assertEquals(array(3,6,9), __::map(array('one'=>1, 'two'=>2, 'three'=>3), function($num, $key) { return $num * 3; }));
+
+    //extra
+    $context = (object) array('multiplier' => 3);
+    $func = function($num) { return $num * $this->multiplier; };
+    $tripled = __::map(array(1,2,3), $func, $context);
+    $this->assertEquals(array(3,6,9), $tripled, 'context bound');
   }
   
   public function testFind() {
@@ -124,7 +137,11 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     // extra
     $evens = __(array(1,2,3,4,5,6))->reject(function($num) { return $num % 2 !== 0; });
     $this->assertEquals(array(2,4,6), $evens, 'works with OO-style calls');
-  
+
+    $context = (object) array('divisor'=>2);
+    $evens = __::reject(array(1,2,3,4,5,6), function($num) { return $num % $this->divisor != 0; }, $context);
+    $this->assertEquals(array(2,4,6), $evens, 'context bound');
+
     // docs
     $this->assertEquals(array(1, 3), __::reject(array(1, 2, 3, 4), function($num) { return $num % 2 === 0; }));
   }
@@ -255,6 +272,11 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     
     // docs
     $this->assertEquals(6, __::reduce(array(1, 2, 3), function($memo, $num) { return $memo + $num; }, 0));
+
+    //extra
+    $context = (object) array('multiplier'=>3);
+    $sum = __::reduce(array(1,2,3), function($sum, $num) { return $sum + $num * $this->multiplier; }, 0, $context);
+    $this->assertEquals(18, $sum, 'context bound');
   }
   
   public function testReduceRight() {
@@ -328,7 +350,12 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     // from js
     $this->assertEquals(3, __::max(array(1,2,3)), 'can perform a regular max');
     $this->assertEquals(1, __::max(array(1,2,3), function($num) { return -$num; }), 'can performa a computation-based max');
-    
+
+    $values = array(0,2);
+    $context = (object) array('multiplier' => 1);
+    $max = __::max($values, function($value) use ($context) { return $value * $context->multiplier; });
+    $this->assertEquals(2, $max, 'Iterator Context');     
+
     // extra
     $stooges = array(
       array('name'=>'moe',   'age'=>40),
@@ -338,6 +365,11 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($stooges[2], __::max($stooges, function($stooge) { return $stooge['age']; }));
     $this->assertEquals($stooges[0], __::max($stooges, function($stooge) { return $stooge['name']; }));
     $this->assertEquals($stooges[0], __($stooges)->max(function($stooge) { return $stooge['name']; }), 'works with OO-style call');
+
+    $values = array(0,2);
+    $context = (object) array('multiplier' => 1);
+    $max = __::max($values, function($value) { return $value * $this->multiplier; }, $context);
+    $this->assertEquals(2, $max, 'Context Bound');
   
     // docs
     $stooges = array(
@@ -346,6 +378,7 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
       array('name'=>'curly', 'age'=>60)
     );
     $this->assertEquals(array('name'=>'curly', 'age'=>60), __::max($stooges, function($stooge) { return $stooge['age']; }));
+
   }
   
   public function testMin() {
@@ -353,6 +386,11 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(1, __::min(array(1,2,3)), 'can perform a regular min');
     $this->assertEquals(3, __::min(array(1,2,3), function($num) { return -$num; }), 'can performa a computation-based max');
     
+    $values = array(0,2);
+    $context = (object) array('multiplier' => -1);
+    $min = __::min($values, function($value) use ($context) { return $value * $context->multiplier; });
+    $this->assertEquals(2, $min, 'Iterator Context');     
+
     // extra
     $stooges = array(
       array('name'=>'moe',   'age'=>40),
@@ -362,6 +400,11 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($stooges[0], __::min($stooges, function($stooge) { return $stooge['age']; }));
     $this->assertEquals($stooges[2], __::min($stooges, function($stooge) { return $stooge['name']; }));
     $this->assertEquals($stooges[2], __($stooges)->min(function($stooge) { return $stooge['name']; }), 'works with OO-style call');
+  
+    $values = array(0,2);
+    $context = (object) array('multiplier' => -1);
+    $min = __::min($values, function($value) { return $value * $this->multiplier; }, $context);
+    $this->assertEquals(2, $min, 'Context Bound');
   
     // docs
     $stooges = array(
@@ -400,7 +443,7 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     // from js
     $parity = __::groupBy(array(1,2,3,4,5,6), function($num) { return $num % 2; });
     $this->assertEquals(array(array(2,4,6), array(1,3,5)), $parity, 'created a group for each value');
-      
+
     // extra
     $parity = __(array(1,2,3,4,5,6))->groupBy(function($num) { return $num % 2; });
     $this->assertEquals(array(array(2,4,6), array(1,3,5)), $parity, 'created a group for each value using OO-style call');
@@ -414,6 +457,10 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $grouped = __::groupBy($vals, 'yesno');
     $this->assertEquals('rejected denied', join(' ', __::pluck($grouped['no'], 'name')), 'pulls no entries');
     $this->assertEquals('accepted allowed', join(' ', __::pluck($grouped['yes'], 'name')), 'pulls yes entries');
+
+    $context = (object) array('divisor' => 2);
+    $result = __::groupBy(array(1,2,3), function ($n) { return $n % $this->divisor; }, $context);
+    $this->assertEquals(array(0 => array(2), 1 => array(1,3)), $result, 'context bound');
     
     // docs
     $result = __::groupBy(array(1, 2, 3, 4, 5), function($n) { return $n % 2; });
@@ -446,6 +493,17 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     // extra
     $this->assertEquals(3, __($numbers)->sortedIndex(35), '35 should be inserted at index 3 with OO-style call');
   
+    $numbers = array(10,20,30,40,50);
+    $num = 35;
+    $index = __::sortedIndex($numbers, $num, function($n) { return $n * 2; });
+    $this->assertEquals(3, $index, 'sortedIndex iterator');
+
+    $numbers = array(10,20,30,40,50);
+    $num = 35;
+    $context = (object) array('multiplier' => 2);
+    $index = __::sortedIndex($numbers, $num, function($n) { return $n * $this->multiplier; }, $context);
+    $this->assertEquals(3, $index, 'context bound');
+
     // docs
     $this->assertEquals(3, __::sortedIndex(array(10, 20, 30, 40), 35));
   }

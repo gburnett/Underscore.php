@@ -36,8 +36,9 @@ class __ {
   
   
   // Invoke the iterator on each item in the collection
-  public function each($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function each($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     if(is_null($collection)) return self::_wrap(null);
     
@@ -53,9 +54,10 @@ class __ {
   
   // Return an array of values by mapping each item through the iterator
   // map alias: collect
-  public function collect($collection=null, $iterator=null) { return self::map($collection, $iterator); }
-  public function map($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function collect($collection=null, $iterator=null, $context=null) { return self::map($collection, $iterator, $context); }
+  public function map($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     if(is_null($collection)) return self::_wrap(array());
     
@@ -72,10 +74,12 @@ class __ {
   
   // Reduce a collection to a single value
   // reduce aliases: foldl, inject
-  public function foldl($collection=null, $iterator=null, $memo=null) { return self::reduce($collection, $iterator, $memo); }
-  public function inject($collection=null, $iterator=null, $memo=null) { return self::reduce($collection, $iterator, $memo); }
-  public function reduce($collection=null, $iterator=null, $memo=null) {
-    list($collection, $iterator, $memo) = self::_wrapArgs(func_get_args(), 3);
+  public function foldl($collection=null, $iterator=null, $memo=null, $context=null) { return self::reduce($collection, $iterator, $memo, $context); }
+  public function inject($collection=null, $iterator=null, $memo=null, $context=null) { return self::reduce($collection, $iterator, $memo, $context); }
+  public function reduce($collection=null, $iterator=null, $memo=null, $context=null) {
+    list($collection, $iterator, $memo, $context) = self::_wrapArgs(func_get_args(), 4);
+
+    $iterator = self::_bindContext($iterator, $context);
     
     if(!is_object($collection) && !is_array($collection)) {
       if(is_null($memo)) throw new Exception('Invalid object');
@@ -151,9 +155,10 @@ class __ {
   
   // Does any values in the collection meet the iterator's truth test?
   // any alias: some
-  public function some($collection=null, $iterator=null) { return self::any($collection, $iterator); }
-  public function any($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function some($collection=null, $iterator=null, $context=null) { return self::any($collection, $iterator, $context); }
+  public function any($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $collection = self::_collection($collection);
     
@@ -167,9 +172,10 @@ class __ {
   
   // Do all values in the collection meet the iterator's truth test?
   // all alias: every
-  public function every($collection=null, $iterator=null) { return self::all($collection, $iterator); }
-  public function all($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function every($collection=null, $iterator=null, $context=null) { return self::all($collection, $iterator, $context); }
+  public function all($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $collection = self::_collection($collection);
     
@@ -184,9 +190,10 @@ class __ {
   
   // Return an array of values that pass the truth iterator test
   // filter alias: select
-  public function select($collection=null, $iterator=null) { return self::filter($collection, $iterator); }
-  public function filter($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function select($collection=null, $iterator=null, $context=null) { return self::filter($collection, $iterator, $context); }
+  public function filter($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $collection = self::_collection($collection);
     
@@ -199,8 +206,9 @@ class __ {
   
   
   // Return an array where the items failing the truth test are removed
-  public function reject($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function reject($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $collection = self::_collection($collection);
     
@@ -214,9 +222,10 @@ class __ {
   
   // Return the value of the first item passing the truth iterator test
   // find alias: detect
-  public function detect($collection=null, $iterator=null) { return self::find($collection, $iterator); }
-  public function find($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function detect($collection=null, $iterator=null, $context=null) { return self::find($collection, $iterator, $context); }
+  public function find($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $collection = self::_collection($collection);
     
@@ -489,8 +498,9 @@ class __ {
   
   
   // Get the max value in the collection
-  public function max($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function max($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     if(is_null($iterator)) return self::_wrap(max($collection));
     
@@ -506,8 +516,9 @@ class __ {
   
   
   // Get the min value in the collection
-  public function min($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function min($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     if(is_null($iterator)) return self::_wrap(min($collection));
     
@@ -523,8 +534,9 @@ class __ {
   
   
   // Sort the collection by return values from the iterator
-  public function sortBy($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function sortBy($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $results = array();
     foreach($collection as $k=>$item) {
@@ -539,8 +551,9 @@ class __ {
   
   
   // Group the collection by return values from the iterator
-  public function groupBy($collection=null, $iterator=null) {
-    list($collection, $iterator) = self::_wrapArgs(func_get_args(), 2);
+  public function groupBy($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
     
     $result = array();
     $collection = (array) $collection;
@@ -554,8 +567,9 @@ class __ {
   
   
   // Returns the index at which the value should be inserted into the sorted collection
-  public function sortedIndex($collection=null, $value=null, $iterator=null) {
-    list($collection, $value, $iterator) = self::_wrapArgs(func_get_args(), 3);
+  public function sortedIndex($collection=null, $value=null, $iterator=null, $context=null) {
+    list($collection, $value, $iterator, $context) = self::_wrapArgs(func_get_args(), 4);
+    $iterator = self::_bindContext($iterator, $context);
     
     $collection = (array) self::_collection($collection);
     $__ = new self;
@@ -1116,5 +1130,17 @@ class __ {
   // Get a collection in a way that supports strings
   private function _collection($collection) {
     return (!is_array($collection) && !is_object($collection)) ? str_split((string) $collection) : $collection;
+  }
+
+  //binds context to closure
+  private function _bindContext($iterator=null, $context=null){
+    if(is_null($context)){
+      return $iterator;
+    }
+    if(is_callable($iterator)){
+      return Closure::bind($iterator, $context);
+    }else{
+      return $iterator;
+    }
   }
 }
