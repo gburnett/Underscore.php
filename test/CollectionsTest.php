@@ -506,6 +506,32 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, __::groupBy($values, 'grp'));
   }
   
+  public function testCountBy() {
+    // from js
+    $parity = __::countBy(array(1,2,3,4,5), function($num) { return $num % 2; });
+    $this->assertEquals($parity[0], 2, 'can countBy');
+    $this->assertEquals($parity[1], 3, 'can countBy');
+
+    //extra
+    $list = array('one','two','three','four','five','six','seven','eight','nine','ten');
+    $counted = __::countBy($list, function ($word) { return strlen($word); });
+    $this->assertEquals($counted['3'], 4, 'can countBy iterator');
+    $this->assertEquals($counted['4'], 3, 'can countBy iterator');
+    $this->assertEquals($counted['5'], 3, 'can countBy iterator');
+
+    $context = (object) array('multiplier' => 2);
+    $iteratorCounted = __::countBy($list, function ($word) { return strlen($word) * $this->multiplier; }, $context);
+    $this->assertEquals($iteratorCounted['6'], 4, 'can countBy iterator with context');
+    $this->assertEquals($iteratorCounted['8'], 3, 'can countBy iterator with context');
+    $this->assertEquals($iteratorCounted['10'], 3, 'can countBy iterator with context');
+
+    $chainedAndCounted = __::chain($list)->countBy(function ($word) { return strlen($word); })->value();
+    $this->assertEquals($chainedAndCounted['3'], 4, 'can be part of chain');
+    $this->assertEquals($chainedAndCounted['4'], 3, 'can be part of chain');
+    $this->assertEquals($chainedAndCounted['5'], 3, 'can be part of chain');
+
+  }
+
   public function testSortedIndex() {
     // from js
     $numbers = array(10, 20, 30, 40, 50);
