@@ -462,6 +462,29 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
     $result = __::groupBy(array(1,2,3), function ($n) { return $n % $this->divisor; }, $context);
     $this->assertEquals(array(0 => array(2), 1 => array(1,3)), $result, 'context bound');
     
+    $chainedAndGrouped = __::chain($vals)->groupBy('yesno')->value();
+    $chainedAndGroupedExpects = array(
+        'no'=>array(
+            array(
+                'name'=>'rejected', 
+                'yesno'=>'no'),
+            array(
+                'name'=>'denied', 
+                'yesno'=>'no')
+        ),
+        'yes'=>array(      
+            array(
+                'name'=>'accepted', 
+                'yesno'=>'yes'
+            ),
+            array(
+                'name'=>'allowed', 
+                'yesno'=>'yes'
+            )
+        )
+    );
+    $this->assertEquals($chainedAndGroupedExpects,$chainedAndGrouped, 'can be part of a chain');
+
     // docs
     $result = __::groupBy(array(1, 2, 3, 4, 5), function($n) { return $n % 2; });
     $this->assertEquals(array(0=>array(2, 4), 1=>array(1, 3, 5)), $result);

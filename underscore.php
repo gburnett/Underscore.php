@@ -562,7 +562,7 @@ class __ {
       if(!array_key_exists($key, $result)) $result[$key] = array();
       $result[$key][] = $v;
     }
-    return $result;
+    return self::_wrap($result);
   }
   
   
