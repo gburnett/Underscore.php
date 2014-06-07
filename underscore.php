@@ -584,6 +584,19 @@ class __ {
     return self::_wrap($result);
   }
   
+  public function indexBy($collection=null, $iterator=null, $context=null) {
+    list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
+    $iterator = self::_bindContext($iterator, $context);
+    
+    $result = array();
+    $collection = (array) $collection;
+    foreach($collection as $k=>$v) {
+      $key = (is_callable($iterator)) ? $iterator($v, $k) : $v[$iterator];
+      $result[$key] = $v;
+    }
+    return self::_wrap($result);
+  }
+
   // Returns the index at which the value should be inserted into the sorted collection
   public function sortedIndex($collection=null, $value=null, $iterator=null, $context=null) {
     list($collection, $value, $iterator, $context) = self::_wrapArgs(func_get_args(), 4);

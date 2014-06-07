@@ -532,6 +532,32 @@ class UnderscoreCollectionsTest extends PHPUnit_Framework_TestCase {
 
   }
 
+  public function testIndexBy(){
+    // from js
+    $parity = __::indexBy(array(1,2,3,4,5), function($num) { return $num % 2; });
+    $this->assertEquals($parity[0], 4, 'can indexBy');
+    $this->assertEquals($parity[1], 5, 'can indexBy');
+
+    //extra
+    $list = array('one','two','three','four','five','six','seven','eight','nine','ten');
+    $indexed = __::indexBy($list, function ($word) { return strlen($word); });
+    $this->assertEquals($indexed['3'], 'ten', 'can indexBy iterator');
+    $this->assertEquals($indexed['4'], 'nine', 'can indexBy iterator');
+    $this->assertEquals($indexed['5'], 'eight', 'can indexBy iterator');
+
+    $context = (object) array('multiplier' => 2);
+    $iteratorIndexed = __::indexBy($list, function ($word) { return strlen($word) * $this->multiplier; }, $context);
+    $this->assertEquals($iteratorIndexed['6'], 'ten', 'can indexBy iterator with context');
+    $this->assertEquals($iteratorIndexed['8'], 'nine', 'can indexBy iterator with context');
+    $this->assertEquals($iteratorIndexed['10'], 'eight', 'can indexBy iterator with context');
+
+    $chainedAndIndexed = __::chain($list)->indexBy(function ($word) { return strlen($word); })->value();
+    $this->assertEquals($chainedAndIndexed['3'], 'ten', 'can be part of chain');
+    $this->assertEquals($chainedAndIndexed['4'], 'nine', 'can be part of chain');
+    $this->assertEquals($chainedAndIndexed['5'], 'eight', 'can be part of chain');
+
+  }
+
   public function testSortedIndex() {
     // from js
     $numbers = array(10, 20, 30, 40, 50);
