@@ -569,17 +569,15 @@ class __ {
     list($collection, $iterator, $context) = self::_wrapArgs(func_get_args(), 3);
     $iterator = self::_bindContext($iterator, $context);
     
-    $groups = array();
+    $result = array();
     $collection = (array) $collection;
     foreach($collection as $k=>$v) {
       $key = (is_callable($iterator)) ? $iterator($v, $k) : $v[$iterator];
-      if(!array_key_exists($key, $groups)) $groups[$key] = array();
-      $groups[$key][] = $v;
-    }
-
-    $result = array();
-    foreach($groups as $k => $v){
-      $result[$k] = count($v);
+      if(array_key_exists($key, $result)){
+          $result[$key] += 1;
+      }else{
+          $result[$key] = 1;
+      }
     }
     return self::_wrap($result);
   }
