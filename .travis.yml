@@ -1,7 +1,10 @@
 language: php
 php:
   - "5.4"
+  - "5.5"
 before_install:
   - php /home/travis/.phpenv/versions/5.4/bin/composer self-update
-before_script: echo 'error_reporting = E_ALL & ~E_STRICT' >> ~/.phpenv/versions/5.4/etc/php.ini
+before_script: 
+  - echo 'error_reporting = E_ALL & ~E_STRICT' >> ~/.phpenv/versions/5.4/etc/php.ini
+  - echo 'error_reporting = E_ALL & ~E_STRICT' >> ~/.phpenv/versions/5.5/etc/php.ini
 script: cd test && phpunit .
