@@ -115,10 +115,26 @@ class UnderscoreArraysTest extends PHPUnit_Framework_TestCase {
   
   public function testFlatten() {
     $list = array(1, array(2), array(3, array(array(array(4)))));
+    $assoc = [
+        [
+        'one' => 1,
+        'two' => 2
+        ],
+        [
+            'three' => 3,
+            'four' => 4,
+            [
+                'five' => 5,
+                'six' => 6
+            ]
+        ]
+    ];
     
     // from js
     $this->assertEquals(array(1,2,3,4), __::flatten($list), 'can flatten nested arrays');
+    $this->assertEquals(['one' => 1, 'two' => 2, 'three' => 3, 'four' => 4, 'five' => 5, 'six' => 6], __::flatten($assoc), 'can flatten associative arrays');
     $this->assertEquals(__::flatten($list, true), array(1, 2, 3, array(array(array(4)))), 'can shallowly flatten nested arrays');
+    $this->assertEquals(__::flatten($assoc, true), ['one' => 1, 'two' => 2, 'three' => 3, 'four' => 4, ['five' => 5, 'six' => 6]],'can shallowly flatten associative arrays');
     
     $func = function() { return __::flatten(func_get_args()); };
     $result = $func(1, array(2), array(3, array(array(array(4)))));

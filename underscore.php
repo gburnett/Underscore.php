@@ -322,12 +322,13 @@ class __ {
     
     $return = array();
     if(count($collection) > 0) {
-      foreach($collection as $item) {
+      foreach($collection as $key => $item) {
         if(is_array($item)) {
           $__ = new self;
           $return = array_merge($return, ($shallow) ? $item : $__->flatten($item));
+        } else {
+            $return[$key] = $item;
         }
-        else $return[] = $item;
       }
     }
     return self::_wrap($return);
